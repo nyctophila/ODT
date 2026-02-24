@@ -1,0 +1,87 @@
+from machine import Pin, PWM
+from time import sleep
+
+pb1 = Pin(18, Pin.IN, Pin.PULL_UP)
+pb2 = Pin(27, Pin.IN, Pin.PULL_UP)
+ls = Pin(23, Pin.IN, Pin.PULL_UP)
+b = Pin(22, Pin.OUT)
+sa = PWM(Pin(13))
+sb = PWM(Pin(14))
+led1 = Pin(4, Pin.OUT)
+led2 = Pin(32, Pin.OUT)
+
+sa.freq(50)
+sb.freq(50)
+
+a = [25, 75, 125]
+i = 1
+
+while True:
+    if ls.value() == 1 :
+        led1.on()
+        led2.off()
+        x = pb1.value()
+        y = pb2.value()
+        
+        sleep(0.1)
+        
+        if x==0 and y==0:
+            b.on()
+            sleep(0.5)
+            b.off()
+            print("Counter Reset")
+            i=1
+            sa.duty(a[i])
+        # for safeguarding against going out of range
+        
+        elif i == 0 and y == 0:
+            i = 0
+            print("Can't go lower!")
+            i = 0
+        elif i == 2 and x == 0:
+            i = 2
+            print("Can't go higher!")
+            i = 2
+            
+        elif x==0:
+            print(i+1)
+            i = i+1
+            sa.duty(a[i])
+        elif y==0:
+            print(i-1)
+            i = i-1
+            sa.duty(a[i])
+        sleep(0.1)
+        
+    else:
+        led1.off()
+        led2.on()
+        x = pb1.value()
+        y = pb2.value()
+        
+        sleep(0.1)
+        
+        if x==0 and y==0:
+            print("Counter Reset")
+            i=1
+            sb.duty(a[i])
+        # for safeguarding against going out of range
+        
+        elif i == 0 and y == 0:
+            i = 0
+            print("Can't go lower!")
+            i = 0
+        elif i == 2 and x == 0:
+            i = 2
+            print("Can't go higher!")
+            i = 2
+            
+        elif x==0:
+            print(i+1)
+            i = i+1
+            sb.duty(a[i])
+        elif y==0:
+            print(i-1)
+            i = i-1
+            sb.duty(a[i])
+        sleep(0.1)
